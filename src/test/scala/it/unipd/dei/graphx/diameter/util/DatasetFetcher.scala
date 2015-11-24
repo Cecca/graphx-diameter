@@ -32,18 +32,14 @@ import scala.sys.process._
  */
 object DatasetFetcher extends Logging {
 
-//  val sources = Map(
-//    "egonets" -> "http://snap.stanford.edu/data/facebook_combined.txt.gz",
-//    "dblp" -> "http://snap.stanford.edu/data/bigdata/communities/com-dblp.ungraph.txt.gz"
-//  )
-
   def download(source: String): File = {
     val input = source
     val output: File = new File("/tmp/", input.split("/").last)
 
-    logInfo(s"Download $input into $output")
-    new URL(input) #> output !!
-
+    if (!output.isFile) {
+      logInfo(s"Download $input into $output")
+      new URL(input) #> output !!
+    }
     output
   }
 
@@ -57,7 +53,7 @@ object DatasetFetcher extends Logging {
 
 }
 
-abstract class Dataset(source: String, diameter: Double) {
+abstract class Dataset(val source: String, val diameter: Double) {
 
   def get(sc: SparkContext): Graph[Int, Distance] = DatasetFetcher.get(sc, source)
 

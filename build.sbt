@@ -21,5 +21,6 @@ spIncludeMaven := false
 sparkComponents := Seq("graphx")
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "2.2.1" % "test"
+  "org.scalatest" %% "scalatest" % "2.2.1" % "test",
+  "org.apache.spark" %% "spark-core" % testSparkVersion.value % "test"
 )
