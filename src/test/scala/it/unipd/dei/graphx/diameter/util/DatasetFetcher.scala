@@ -20,12 +20,14 @@ package it.unipd.dei.graphx.diameter.util
 import java.io.File
 import java.net.URL
 
-import it.unipd.dei.graphx.diameter.Distance
-import org.apache.spark.graphx.{Graph, GraphLoader}
+import it.unipd.dei.graphx.diameter.{Dijkstra, ClusteringInfo, LocalGraph, Distance, Infinity}
+import org.apache.spark.graphx.{Edge, Graph, GraphLoader}
 import org.apache.spark.{Logging, SparkContext}
 
 import scala.language.postfixOps
 import scala.sys.process._
+import scala.collection.mutable
+import scala.util.Random
 
 /**
  * Downloads datasets from a remote location.
@@ -59,20 +61,84 @@ object DatasetFetcher extends Logging {
 
 }
 
-abstract class Dataset(val source: String, val diameter: Double) {
+abstract class Dataset(val source: String) extends Logging {
 
   def get(sc: SparkContext): Graph[Int, Distance] = DatasetFetcher.get(sc, source)
 
+  def localCopy(sc: SparkContext): LocalGraph = {
+    val g = get(sc).mapVertices{ (id, v) => ClusteringInfo.makeCenter(id, ClusteringInfo()) }
+    LocalGraph.fromGraph(g)
+  }
+
+  def diameter(sc: SparkContext): Double = {
+    logInfo("Computing a lower bound to the original diameter")
+    val graph = localCopy(sc)
+
+    var bestDist: Distance = 0
+    var src = Random.nextInt(graph.size)
+    var dest = -1
+    var connected = true
+    var it = 0
+    val visited = mutable.Set[Int]()
+
+    while (!visited.contains(src)) {
+      it += 1
+      visited.add(src)
+      val distances = Dijkstra.sssp(src, graph)
+      val (far, dist, conn) = farthest(distances)
+      // If in a disconnected node, jump to another source
+      dest = if (dist > 0) far else Random.nextInt(graph.size)
+      connected = connected && conn
+      if (dist > bestDist) {
+        it = 0
+        bestDist = dist
+        src = far
+      }
+    }
+
+    logInfo(s"Found a lower bound on the original diameter: $bestDist")
+    bestDist
+  }
+
+  private def farthest(distances: Array[Distance]): (Int, Distance, Boolean) = {
+    var vVal: Distance = 0
+    var vIdx = 0
+    var it = 0
+    val n = distances.length
+    var connected = true
+    while(it < n) {
+      if(distances(it) < Infinity) {
+        if (distances(it) > vVal) {
+          vVal = distances(it)
+          vIdx = it
+        }
+      } else {
+        connected = false
+      }
+      it += 1
+    }
+    (vIdx, vVal, connected)
+  }
+
+}
+
+trait UniformWeights extends Dataset {
+  override def get(sc: SparkContext): Graph[Int, Distance] = {
+    super.get(sc).mapEdges { e =>
+      Random.nextDouble()
+    }
+  }
 }
 
 case class Egonet() extends Dataset(
-  source   = "http://snap.stanford.edu/data/facebook_combined.txt.gz",
-  diameter = 8)
+  "http://snap.stanford.edu/data/facebook_combined.txt.gz")
 
 case class Dblp() extends Dataset(
-  source   = "http://snap.stanford.edu/data/bigdata/communities/com-dblp.ungraph.txt.gz",
-  diameter = 21)
+  "http://snap.stanford.edu/data/bigdata/communities/com-dblp.ungraph.txt.gz")
 
 case class Amazon() extends Dataset(
-  source  = "http://snap.stanford.edu/data/bigdata/communities/com-amazon.ungraph.txt.gz",
-  diameter = 44)
+  "http://snap.stanford.edu/data/bigdata/communities/com-amazon.ungraph.txt.gz")
+
+case class EgonetUniform() extends Egonet with UniformWeights
+case class DblpUniform() extends Dblp with UniformWeights
+case class AmazonUniform() extends Amazon with UniformWeights
