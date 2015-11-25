@@ -24,15 +24,16 @@ import org.scalatest.{FreeSpec, Matchers}
 class DiameterApproximationSpec extends FreeSpec with Matchers {
 
   def test(dataset: Dataset) = {
-    withSpark { sc =>
+    for(run <- 0 until 3){
+      withSpark { sc =>
       val g = dataset.get(sc)
-      val approx = DiameterApproximation.run(g, 1000)
+      val approx = DiameterApproximation.run(g, 400)
       val original = dataset.diameter(sc)
 
-      f"should be greater than the original ($approx%.2f >= $original%.2f ?)" in {
-        approx should be >= original
+        f"$run) should be greater than the original ($approx%.2f >= $original%.2f ?)" in {
+          approx should be >= original
+        }
       }
-
     }
 
   }
