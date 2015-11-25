@@ -26,7 +26,7 @@ class DiameterApproximationSpec extends FreeSpec with Matchers {
   def test(dataset: Dataset, factor: Double = 2.0) = {
     withSpark { sc =>
       val g = dataset.get(sc)
-      val approx = DiameterApproximation.run(g, 100)
+      val approx = DiameterApproximation.run(g, 1000)
       val original = dataset.diameter(sc)
       val upper = factor*original
 
@@ -41,28 +41,28 @@ class DiameterApproximationSpec extends FreeSpec with Matchers {
 
   }
 
-  "The diameter approximation on unweighted graphs:" - {
-    "egonet" - {
-      test(new Egonet())
-    }
-    "dblp" - {
-      test(new Dblp())
-    }
-    "amazon" - {
-      test(new Amazon())
-    }
-  }
+//  "The diameter approximation on unweighted graphs:" - {
+//    "egonet" - {
+//      test(new Egonet())
+//    }
+//    "dblp" - {
+//      test(new Dblp())
+//    }
+//    "amazon" - {
+//      test(new Amazon())
+//    }
+//  }
 
   "The diameter approximation on graphs with uniform random weights:" - {
-    "egonet" - {
-      test(new EgonetUniform(), factor = 1.5)
-    }
+//    "egonet" - {
+//      test(new EgonetUniform(), factor = 1.5)
+//    }
     "dblp" - {
       test(new DblpUniform(), factor = 1.5)
     }
-    "amazon" - {
-      test(new AmazonUniform(), factor = 1.5)
-    }
+//    "amazon" - {
+//      test(new AmazonUniform(), factor = 1.5)
+//    }
   }
 
 }

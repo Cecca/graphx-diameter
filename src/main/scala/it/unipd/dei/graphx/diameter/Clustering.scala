@@ -188,10 +188,10 @@ object Clustering extends Logging {
       .subgraph(epred = { ctx => ctx.attr <= delta })
       .aggregateMessages[ClusteringMessage](
         ctx => {
-          if (ctx.srcAttr.updated && ctx.srcAttr.phaseDistance <= delta) {
+          if (ctx.srcAttr.updated && ctx.srcAttr.phaseDistance < delta) {
             ctx.sendToDst(ClusteringMessage(ctx.srcAttr, ctx.attr))
           }
-          if (ctx.dstAttr.updated && ctx.dstAttr.phaseDistance <= delta) {
+          if (ctx.dstAttr.updated && ctx.dstAttr.phaseDistance < delta) {
             ctx.sendToSrc(ClusteringMessage(ctx.dstAttr, ctx.attr))
           }
         },
@@ -204,7 +204,7 @@ object Clustering extends Logging {
         updatedAcc += 1
         if (v.isQuotient) quotientAcc += 1
         v.updateWith(msg, delta)
-      case (_, v, _) if v.phaseDistance <= delta =>
+      case (_, v, _) if v.phaseDistance < delta =>
         if (v.isQuotient) quotientAcc += 1
 
         v.copy(updated = false)
@@ -271,7 +271,7 @@ case class ClusteringInfo(
       phaseDistance = message.phaseDistance,
       offsetDistance = message.offsetDistance,
       updated = true,
-      covered = covered || message.phaseDistance <= delta)
+      covered = covered || message.phaseDistance < delta)
 
 }
 
