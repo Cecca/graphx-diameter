@@ -23,19 +23,19 @@ import org.scalatest.{FreeSpec, Matchers}
 
 class DiameterApproximationSpec extends FreeSpec with Matchers {
 
-  def test(dataset: Dataset) = {
+  def test(dataset: Dataset, factor: Double = 2.0) = {
     withSpark { sc =>
       val g = dataset.get(sc)
       val approx = DiameterApproximation.run(g, 100)
       val original = dataset.diameter(sc)
-      val twice = 2*original
+      val upper = factor*original
 
       f"should be greater than the original ($approx%.2f >= $original%.2f ?)" in {
         approx should be >= original
       }
 
-      f"should be smaller than twice the original ($approx%.2f <= $twice%.2f ?) " in {
-        approx should be <= twice
+      f"should be smaller than $factor%.1f times the original ($approx%.2f <= $upper%.2f ?) " in {
+        approx should be <= upper
       }
     }
 
@@ -55,13 +55,13 @@ class DiameterApproximationSpec extends FreeSpec with Matchers {
 
   "The diameter approximation on graphs with uniform random weights:" - {
     "egonet" - {
-      test(new EgonetUniform())
+      test(new EgonetUniform(), factor = 1.5)
     }
     "dblp" - {
-      test(new DblpUniform())
+      test(new DblpUniform(), factor = 1.5)
     }
     "amazon" - {
-      test(new AmazonUniform())
+      test(new AmazonUniform(), factor = 1.5)
     }
   }
 
