@@ -23,46 +23,42 @@ import org.scalatest.{FreeSpec, Matchers}
 
 class DiameterApproximationSpec extends FreeSpec with Matchers {
 
-  def test(dataset: Dataset, factor: Double = 2.0) = {
+  def test(dataset: Dataset) = {
     withSpark { sc =>
       val g = dataset.get(sc)
       val approx = DiameterApproximation.run(g, 1000)
       val original = dataset.diameter(sc)
-      val upper = factor*original
 
       f"should be greater than the original ($approx%.2f >= $original%.2f ?)" in {
         approx should be >= original
       }
 
-      f"should be smaller than $factor%.1f times the original ($approx%.2f <= $upper%.2f ?) " in {
-        approx should be <= upper
-      }
     }
 
   }
 
-//  "The diameter approximation on unweighted graphs:" - {
-//    "egonet" - {
-//      test(new Egonet())
-//    }
-//    "dblp" - {
-//      test(new Dblp())
-//    }
-//    "amazon" - {
-//      test(new Amazon())
-//    }
-//  }
+  "The diameter approximation on unweighted graphs:" - {
+    "egonet" - {
+      test(new Egonet())
+    }
+    "dblp" - {
+      test(new Dblp())
+    }
+    "amazon" - {
+      test(new Amazon())
+    }
+  }
 
   "The diameter approximation on graphs with uniform random weights:" - {
-//    "egonet" - {
-//      test(new EgonetUniform(), factor = 1.5)
-//    }
-    "dblp" - {
-      test(new DblpUniform(), factor = 1.5)
+    "egonet" - {
+      test(new EgonetUniform())
     }
-//    "amazon" - {
-//      test(new AmazonUniform(), factor = 1.5)
-//    }
+    "dblp" - {
+      test(new DblpUniform())
+    }
+    "amazon" - {
+      test(new AmazonUniform())
+    }
   }
 
 }
