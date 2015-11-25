@@ -32,9 +32,15 @@ import scala.sys.process._
  */
 object DatasetFetcher extends Logging {
 
+  val cacheDir = new File(System.getProperty("user.home"), ".graphx-diameter-datasets")
+
+  if (!cacheDir.isDirectory) {
+    cacheDir.mkdirs()
+  }
+
   def download(source: String): File = {
     val input = source
-    val output: File = new File("/tmp/", input.split("/").last)
+    val output: File = new File(cacheDir, input.split("/").last)
 
     if (!output.isFile) {
       logInfo(s"Download $input into $output")
