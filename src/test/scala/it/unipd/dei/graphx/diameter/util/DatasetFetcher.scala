@@ -70,6 +70,11 @@ abstract class Dataset(val source: String) extends Logging {
     LocalGraph.fromGraph(g)
   }
 
+  /*
+   * Here we compute a lower bound to the diameter because the source
+   * site [SNAP](http://snap.stanford.edu/) provides lower bounds that
+   * are actually lower than the ones we can find empirically in this way.
+   */
   def diameter(sc: SparkContext): Double = {
     logInfo("Computing a lower bound to the original diameter")
     val graph = localCopy(sc)
@@ -130,15 +135,15 @@ trait UniformWeights extends Dataset {
   }
 }
 
-case class Egonet() extends Dataset(
+class Egonet() extends Dataset(
   "http://snap.stanford.edu/data/facebook_combined.txt.gz")
 
-case class Dblp() extends Dataset(
+class Dblp() extends Dataset(
   "http://snap.stanford.edu/data/bigdata/communities/com-dblp.ungraph.txt.gz")
 
-case class Amazon() extends Dataset(
+class Amazon() extends Dataset(
   "http://snap.stanford.edu/data/bigdata/communities/com-amazon.ungraph.txt.gz")
 
-case class EgonetUniform() extends Egonet with UniformWeights
-case class DblpUniform() extends Dblp with UniformWeights
-case class AmazonUniform() extends Amazon with UniformWeights
+class EgonetUniform() extends Egonet with UniformWeights
+class DblpUniform() extends Dblp with UniformWeights
+class AmazonUniform() extends Amazon with UniformWeights

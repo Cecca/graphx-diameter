@@ -18,59 +18,50 @@
 package it.unipd.dei.graphx.diameter
 
 import it.unipd.dei.graphx.diameter.util.LocalSparkContext.withSpark
-import it.unipd.dei.graphx.diameter.util.{Amazon, Dblp, Egonet}
+import it.unipd.dei.graphx.diameter.util._
 import org.scalatest.{FreeSpec, Matchers}
 
 class DiameterApproximationSpec extends FreeSpec with Matchers {
 
-  "The diameter approximation on:" - {
-    "egonet" - {
-      withSpark { sc =>
-        val dataset = Egonet()
-        val g = dataset.get(sc)
-        val approx = DiameterApproximation.run(g, 100)
-        val original = dataset.diameter
+  def test(dataset: Dataset) = {
+    withSpark { sc =>
+      val g = dataset.get(sc)
+      val approx = DiameterApproximation.run(g, 100)
+      val original = dataset.diameter(sc)
+      val twice = 2*original
 
-        "should be greater than the original" in {
-          approx should be >= original
-        }
-
-        "should be smaller than twice the original" in {
-          approx should be <= (2*original)
-        }
+      f"should be greater than the original ($approx%.2f >= $original%.2f ?)" in {
+        approx should be >= original
       }
+
+      f"should be smaller than twice the original ($approx%.2f <= $twice%.2f ?) " in {
+        approx should be <= twice
+      }
+    }
+
+  }
+
+  "The diameter approximation on unweighted graphs:" - {
+    "egonet" - {
+      test(new Egonet())
     }
     "dblp" - {
-      withSpark { sc =>
-        val dataset = Dblp()
-        val g = dataset.get(sc)
-        val approx = DiameterApproximation.run(g, 100)
-        val original = dataset.diameter
-
-        "should be greater than the original" in {
-          approx should be >= original
-        }
-
-        "should be smaller than twice the original" in {
-          approx should be <= (2*original)
-        }
-      }
+      test(new Dblp())
     }
     "amazon" - {
-      withSpark { sc =>
-        val dataset = Amazon()
-        val g = dataset.get(sc)
-        val approx = DiameterApproximation.run(g, 100)
-        val original = dataset.diameter
+      test(new Amazon())
+    }
+  }
 
-        "should be greater than the original" in {
-          approx should be >= original
-        }
-
-        "should be smaller than twice the original" in {
-          approx should be <= (2*original)
-        }
-      }
+  "The diameter approximation on graphs with uniform random weights:" - {
+    "egonet" - {
+      test(new EgonetUniform())
+    }
+    "dblp" - {
+      test(new DblpUniform())
+    }
+    "amazon" - {
+      test(new AmazonUniform())
     }
   }
 
