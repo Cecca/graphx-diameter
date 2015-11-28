@@ -129,10 +129,13 @@ abstract class Dataset(val source: String) extends Logging {
 
 }
 
+/**
+ * Reweights the edges with weights between 1 and 2
+ */
 trait UniformWeights extends Dataset {
   override def get(sc: SparkContext): Graph[Int, Distance] = {
     super.get(sc).mapEdges { e =>
-      math.max(10*Double.MinPositiveValue, Random.nextDouble())
+      Random.nextDouble() + 1
     }
   }
 }
