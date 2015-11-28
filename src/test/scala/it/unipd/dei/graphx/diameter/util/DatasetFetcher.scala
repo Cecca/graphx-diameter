@@ -52,10 +52,11 @@ object DatasetFetcher extends Logging {
   }
 
   def buildGraph(sc: SparkContext, file: File): Graph[Int, Distance] = {
-    GraphLoader.edgeListFile(
-      sc, file.getAbsolutePath, canonicalOrientation = true, numEdgePartitions = 8)
-      .mapEdges{ e => 1.0 }
-      .groupEdges(math.min)
+    val g =GraphLoader.edgeListFile(
+      sc, file.getAbsolutePath, canonicalOrientation = true,
+      numEdgePartitions = sc.defaultParallelism)
+
+    g.mapEdges{ e => 1.0 }.groupEdges(math.min)
   }
 
   def get(sc: SparkContext, source: String): Graph[Int, Distance] =
