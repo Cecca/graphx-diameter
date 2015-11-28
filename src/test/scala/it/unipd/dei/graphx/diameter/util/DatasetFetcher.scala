@@ -132,7 +132,7 @@ abstract class Dataset(val source: String) extends Logging {
 trait UniformWeights extends Dataset {
   override def get(sc: SparkContext): Graph[Int, Distance] = {
     super.get(sc).mapEdges { e =>
-      Random.nextDouble()
+      math.max(10*Double.MinPositiveValue, Random.nextDouble())
     }
   }
 }
