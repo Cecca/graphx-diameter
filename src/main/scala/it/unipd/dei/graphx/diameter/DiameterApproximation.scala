@@ -20,6 +20,7 @@ package it.unipd.dei.graphx.diameter
 import org.apache.spark.Logging
 import org.apache.spark.graphx.Graph
 
+import scala.language.implicitConversions
 import scala.reflect.ClassTag
 
 object DiameterApproximation extends Logging {
@@ -70,5 +71,14 @@ object DiameterApproximation extends Logging {
 
     diameter
   }
+
+  implicit def graphToApproximator[VD:ClassTag](graph: Graph[VD, Distance])
+  : DiameterApproximator[VD] = new DiameterApproximator[VD](graph)
+
+}
+
+class DiameterApproximator[VD:ClassTag](graph: Graph[VD, Distance]) {
+
+  def diameterApprox(): Distance = DiameterApproximation.run(graph)
 
 }
