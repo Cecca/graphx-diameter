@@ -91,18 +91,7 @@ edges. The package `it.unipd.dei.graphx.diameter` defines a type
 type Distance = Double
 ```
 
-Given a `org.apache.spark.graphx.Graph[V, Distance]` object, you can
-get an approximation to its diameter in the following way
-
-```scala
-import it.unipd.dei.graphx.diameter.DiameterApproximation
-
-val g = // ... the graph object ...
-val approx: Distance = DiameterApproximation.run(g)
-```
-
-The function `DiameterApproximation.run` takes two optional
-parameters, namely
+The algorithm takes two parameters, namely
 
  - `target`: this is the size of the quotient graph that will be built
    by the underlying clustering algorithm. It depends on the size of
@@ -110,7 +99,7 @@ parameters, namely
    computes the diameter of a graph of size `target`. Higher values of
    `target` can result is shorter running times, whereas smaller ones
    require less memory. Usually `target == 4000` provides a good
-   compromise.
+   compromise, and this is the default.
 
  - `delta`: this is a distance and controls the number of edges
    controls the number of nodes and edges that can be active in each
@@ -118,7 +107,51 @@ parameters, namely
    fewer but slower rounds; smaller values will perform more shorter
    rounds. In any case, this parameter is taken as a hint by the
    algorithm, that then auto-tunes itself. A good initial guess is
-   (empirically) the average edge weight.
+   (empirically) the average edge weight, which is the default.
 
 For more details on these two parameters, we refer to the companion
 papers.
+
+Given a `org.apache.spark.graphx.Graph[V, Distance]` object, you can
+get an approximation to its diameter as follows, using implicit
+conversions
+
+```scala
+// import implicit conversions
+import it.unipd.dei.graphx.diameter.DiameterApproximation._
+
+val g = // ... build the graph object ...
+
+// Compute the approximation using the default parameters
+g.diameterApprox()
+
+// Specify the target size for the underlying clustering algorithm
+g.diameterApprox(target=5000)
+
+// Control the number of active nodes/edges in each step
+g.diameterApprox(delta=0.5)
+
+// Both parameters can be specified simultaneously
+g.diameterApprox(target=5000, delta=0.5)
+```
+
+If you prefer to avoid implicit conversions, you can explicitly invoke
+`DiameterApproximation.run`, as follows
+
+```scala
+import it.unipd.dei.graphx.diameter.DiameterApproximation
+
+val g = // ... build the graph object ...
+
+// Compute the approximation using the default parameters
+DiameterApproximation.run(g)
+
+// Specify the target size for the underlying clustering algorithm
+DiameterApproximation.run(g, target=5000)
+
+// Control the number of active nodes/edges in each step
+DiameterApproximation.run(g, delta=0.5)
+
+// Both parameters can be specified simultaneously
+DiameterApproximation.run(g, target=5000, delta=0.5)
+```
