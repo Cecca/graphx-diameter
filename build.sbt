@@ -18,6 +18,8 @@ spAppendScalaVersion := true
 
 spIncludeMaven := false
 
+spIgnoreProvided := true
+
 sparkComponents := Seq("graphx")
 
 libraryDependencies ++= Seq(
