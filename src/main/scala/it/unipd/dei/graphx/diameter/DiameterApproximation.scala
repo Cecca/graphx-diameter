@@ -81,4 +81,10 @@ class DiameterApproximator[VD:ClassTag](graph: Graph[VD, Distance]) {
 
   def diameterApprox(): Distance = DiameterApproximation.run(graph)
 
+  def diameterApprox(target: Long): Distance = DiameterApproximation.run(graph, target)
+
+  def diameterApprox(delta: Distance): Distance = DiameterApproximation.run(graph, delta)
+
+  def diameterApprox(target: Long, delta: Distance): Distance = DiameterApproximation.run(graph, target, delta)
+
 }
