@@ -23,8 +23,11 @@ import org.scalatest.{FreeSpec, Matchers}
 
 class DiameterApproximationSpec extends FreeSpec with Matchers {
 
+  val numRuns = System.getProperty("test.approximation.runs", "1").toInt
+  require(numRuns >= 1)
+
   def test(dataset: Dataset) = {
-    for(run <- 0 until 3){
+    for(run <- 0 until numRuns){
       withSpark { sc =>
       val g = dataset.get(sc)
       val approx = DiameterApproximation.run(g, 400)
