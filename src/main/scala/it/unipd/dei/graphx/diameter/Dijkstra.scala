@@ -55,15 +55,6 @@ object Dijkstra {
         val w = nWeights(i)
         val v = nIds(i)
         val d = w + distance(vertex)
-        if (d < 0) {
-          if (distance(vertex) == Infinity) {
-            throw new DisconnectedGraphException(
-              s"Node $vertex is unreachable from node $src")
-          }
-          throw new IntegerOverflowException(
-            s"Vertex $vertex, distance ${distance(vertex)}, " +
-              s"neighbour $v, weight $w, sum $d")
-        }
         if(d < distance(v)) {
           distance(v) = d
           q.decreasePriority(v, d)
@@ -85,7 +76,7 @@ object Dijkstra {
  * This class is used in place of a single double array of tuples to limit
  * memory allocation and object creation. This way the overhead of object
  * creation for tuples in the inner loop of Dijkstra's algorithm is avoided
- * and so is the garbage collection of theses objects. This leads to better
+ * and so is the garbage collection of these objects. This leads to better
  * performance.
  */
 private[diameter]
@@ -188,7 +179,3 @@ object LocalGraph {
   }
 
 }
-
-class IntegerOverflowException(message: String) extends Exception(message)
-
-class DisconnectedGraphException(message: String) extends Exception(message)
