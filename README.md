@@ -20,11 +20,11 @@ the following papers
    [Arxiv preprint](http://arxiv.org/abs/1506.03265)
 
 **NOTE**: the implementation contained in this package is *not* the
-  one used to performed the experiments described in the
-  aforementioned papers. That implementation is available under the
-  GPL license [here](http://crono.dei.unipd.it/gradias/), and was
-  developed on plain Spark. `graphx-diameter`, instead, provides an
-  equivalent implementation compatible with `graphx`.
+  one used to perform the experiments described in the aforementioned
+  papers. That implementation is available under the GPL license
+  [here](http://crono.dei.unipd.it/gradias/), and was developed on
+  plain Spark. `graphx-diameter`, instead, provides an equivalent
+  implementation compatible with `graphx`.
   
 
 Motivation
