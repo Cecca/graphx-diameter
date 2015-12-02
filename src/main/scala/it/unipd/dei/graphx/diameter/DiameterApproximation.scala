@@ -27,7 +27,8 @@ import scala.reflect.ClassTag
  * Functions to approximate the diameter of large graphs. The algorithm implemented here
  * is based on the ones described in the papers
  *
- *  - "Space and Time Efficient Parallel Graph Decomposition, Clustering, and Diameter Approximation"<br />
+ *  - "Space and Time Efficient Parallel Graph Decomposition, Clustering,
+ *    and Diameter Approximation"<br />
  *    by Matteo Ceccarello, Andrea Pietracaprina, Geppino Pucci, and Eli Upfal
  *  - "A Practical Parallel Algorithm for Diameter Approximation of Massive Weighted Graphs"<br />
  *    by Matteo Ceccarello, Andrea Pietracaprina, Geppino Pucci, and Eli Upfal
