@@ -1,6 +1,8 @@
 Graph diameter approximation on Spark
 =====================================
 
+[![Build Status](https://travis-ci.org/Cecca/graphx-diameter.svg)](https://travis-ci.org/Cecca/graphx-diameter)
+
 `graphx-diameter` is a Spark package that allows to approximate the
 diameter of (weighted) graphs, that is the longest shortest path.
 
