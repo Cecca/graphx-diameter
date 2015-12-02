@@ -23,6 +23,9 @@ import org.apache.spark.{Accumulator, Logging}
 import scala.annotation.tailrec
 import scala.util.Random
 
+/**
+ * The clustering algorithm used to compute the diameter approximation.
+ */
 private[diameter]
 object Clustering extends Logging {
 

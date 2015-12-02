@@ -17,10 +17,20 @@
 
 package it.unipd.dei.graphx
 
+/**
+ * This package provides functions to approximate the diameter of large graphs.
+ * The main entry point to the library is the [[DiameterApproximation]] object
+ */
 package object diameter {
 
+  /**
+   * Alias for distances.
+   */
   type Distance = Double
 
+  /**
+   * Represents an infinite distance.
+   */
   val Infinity = Double.PositiveInfinity
 
 }

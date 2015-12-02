@@ -22,6 +22,9 @@ import org.apache.spark.graphx.{Graph, VertexId}
 
 import scala.collection.mutable.ArrayBuffer
 
+/**
+ * An implementation of Dijkstra's Single Source Shortest Path algorithm.
+ */
 private[diameter]
 object Dijkstra {
 

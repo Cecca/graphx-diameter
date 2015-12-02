@@ -14,12 +14,17 @@ the following papers
    Matteo Ceccarello, Andrea Pietracaprina, Geppino Pucci, and Eli
    Upfal <br />
    [SPAA 2015](http://dx.doi.org/10.1145/2755573.2755591)
+   [bibtex file](https://gist.githubusercontent.com/Cecca/0c1cabb1ed9e2bed396b/raw/d84c4177c73d11c110add5f47a57281b8b8259a0/CeccarelloPPU15-unweighted.bib)
 
  - _A Practical Parallel Algorithm for Diameter Approximation of
    Massive Weighted Graphs_ <br />
    Matteo Ceccarello, Andrea Pietracaprina, Geppino Pucci, and Eli
    Upfal <br />
    [Arxiv preprint](http://arxiv.org/abs/1506.03265)
+   [bibtex file](https://gist.githubusercontent.com/Cecca/1dee801b2ac968cc4809/raw/e99b75bda9b945ef3840524e15af4a3eca3b9f4a/CeccarelloPPU15-weighted.bib)
+
+If you use this software in your research, please cite the aforementioned
+papers.
 
 **NOTE**: the implementation contained in this package is *not* the
   one used to perform the experiments described in the aforementioned
@@ -103,7 +108,7 @@ The algorithm takes two parameters, namely
    require less memory. Usually `target == 4000` provides a good
    compromise, and this is the default.
 
- - `delta`: this is a distance and controls the number of edges
+ - `delta`: this parameter, representing a distance,
    controls the number of nodes and edges that can be active in each
    step of the algorithm. Intuitively, higher values will result in
    fewer but slower rounds; smaller values will perform more shorter

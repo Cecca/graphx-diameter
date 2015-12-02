@@ -21,7 +21,7 @@ import scala.annotation.tailrec
 
 /**
  * Implementation of a fixed max-size priority queue to be used in
- * Dijkstra algorithm. Internally it uses a min-heap.
+ * Dijkstra's algorithm. Internally it uses a min-heap.
  *
  * Can store values in the range [0..maxSize-1].
  *
