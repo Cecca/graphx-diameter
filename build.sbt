@@ -2,7 +2,7 @@ name := "graphx-diameter"
 
 organization := "it.unipd.dei"
 
-version := "0.1.0"
+version := "0.2.0-SNAPSHOT"
 
 scalaVersion := "2.10.5"
 
@@ -31,7 +31,7 @@ libraryDependencies ++= Seq(
 
 test in assembly := {}
 
-licenses := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
+licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 
 homepage := Some(url("https://github.com/Cecca/graphx-diameter"))
 
