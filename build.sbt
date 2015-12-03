@@ -18,7 +18,7 @@ testSparkVersion := sys.props.getOrElse("spark.testVersion", sparkVersion.value)
 
 spAppendScalaVersion := true
 
-spIncludeMaven := false
+spIncludeMaven := true
 
 spIgnoreProvided := true
 
@@ -30,3 +30,21 @@ libraryDependencies ++= Seq(
 )
 
 test in assembly := {}
+
+licenses := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
+
+homepage := Some(url("https://github.com/Cecca/graphx-diameter"))
+
+pomExtra := {
+  <scm>
+    <url>git@github.com:Cecca/graphx-diameter.git</url>
+    <connection>scm:git:git@github.com:Cecca/graphx-diameter.git</connection>
+  </scm>
+    <developers>
+      <developer>
+        <id>Cecca</id>
+        <name>Matteo Ceccarello</name>
+        <url>https://github.com/Cecca</url>
+      </developer>
+    </developers>
+}
