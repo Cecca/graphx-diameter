@@ -68,8 +68,7 @@ two goals:
 
 The algorithm returns an approximation of the diameter in the form of
 an upper bound, with a provable polylogarithmic bound. In practice,
-the approximation factor is `~2` on unweighted graphs and `< 1.5` on
-weighted graphs.
+the approximation factor is usually a small constant.
 
 Further details on the algorithm, its efficiency, and the
 approximation factor are given in the aforementioned papers:
@@ -81,13 +80,54 @@ approximation factor are given in the aforementioned papers:
  - For the weighted case: [_"A Practical Parallel Algorithm for
    Diameter Approximation of Massive Weighted
    Graphs"_](http://arxiv.org/abs/1506.03265).
-
+	 
 
 Linking
 -------
 
-**TODO**
+`graphx-diameter` is cross compiled for both Scala 2.10 and 2.11. You
+can include it in your project in several ways.
 
+### spark-shell, pyspark, or spark-submit
+
+The suffix `_2.xx` appended to the package name must match the Scala
+version that is run by the `spark-shell` command.
+
+```
+$ $SPARK_HOME/bin/spark-shell --packages it.unipd.dei:graphx-diameter_2.10:0.1.0
+```
+
+### sbt
+
+If you use the
+[sbt-spark-package](http://github.com/databricks/sbt-spark-package)
+plugin then add the following line to your `build.sbt`
+
+```scala
+spDependencies += "Cecca/graphx-diameter:0.1.0"
+```
+
+Otherwise, you can add `graphx-diameter` as a normal dependency
+
+```scala
+libraryDependencies += "it.unipd.dei" %% "graphx-diameter" % "0.1.0"
+```
+
+### Maven
+
+Again, be sure that the `_2.xx` suffix matches the Scala version you
+already use in your project.
+
+```xml
+<dependencies>
+  <!-- list of dependencies -->
+  <dependency>
+    <groupId>it.unipd.dei</groupId>
+    <artifactId>graphx-diameter_2.11</artifactId>
+    <version>0.1.0</version>
+  </dependency>
+</dependencies>
+```
 
 Usage
 -----
