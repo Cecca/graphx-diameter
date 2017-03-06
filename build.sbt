@@ -33,6 +33,26 @@ test in assembly := {}
 
 scalacOptions ++= Seq("-unchecked", "-deprecation")
 
+/*
+ * Release information
+ */
+
+publishTo := {
+  val nexus = "https://oss.sonatype.org/"
+  if (isSnapshot.value)
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  else
+    Some("releases" at nexus + "service/local/staging/deploy/maven2")
+}
+
+useGpg := true
+
+publishMavenStyle := true
+
+publishArtifact in Test := false
+
+pomIncludeRepository := { _ => false }
+
 licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 
 homepage := Some(url("https://github.com/Cecca/graphx-diameter"))
