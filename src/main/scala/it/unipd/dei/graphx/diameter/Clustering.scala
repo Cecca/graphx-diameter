@@ -18,7 +18,7 @@
 package it.unipd.dei.graphx.diameter
 
 import org.apache.spark.graphx.{Graph, TripletFields, VertexId}
-import org.apache.spark.Accumulator
+import org.apache.spark.util.LongAccumulator
 import org.slf4j.LoggerFactory
 
 import scala.annotation.tailrec
@@ -163,8 +163,8 @@ object Clustering {
 
     val start = System.currentTimeMillis()
 
-    val updatedAcc = graph.edges.sparkContext.accumulator(0L)
-    val quotientAcc = graph.edges.sparkContext.accumulator(0L)
+    val updatedAcc = graph.edges.sparkContext.longAccumulator
+    val quotientAcc = graph.edges.sparkContext.longAccumulator
 
     val updated = relaxEdges(graph, delta, updatedAcc, quotientAcc).persist()
     updated.numVertices
@@ -186,8 +186,8 @@ object Clustering {
   private def relaxEdges(
                           graph: Graph[ClusteringInfo, Distance],
                           delta: Distance,
-                          updatedAcc: Accumulator[Long],
-                          quotientAcc: Accumulator[Long])
+                          updatedAcc: LongAccumulator,
+                          quotientAcc: LongAccumulator)
   : Graph[ClusteringInfo, Distance] = {
 
     val messages = graph
@@ -207,15 +207,15 @@ object Clustering {
 
     graph.outerJoinVertices(messages) {
       case (id, v, Some(msg)) if !v.covered || (msg.distance < v.distance && v.isUnstable) =>
-        updatedAcc += 1
-        if (v.isQuotient) quotientAcc += 1
+        updatedAcc add 1
+        if (v.isQuotient) quotientAcc add 1
         v.updateWith(msg, delta)
       case (_, v, _) if v.phaseDistance < delta =>
-        if (v.isQuotient) quotientAcc += 1
+        if (v.isQuotient) quotientAcc add 1
 
         v.copy(updated = false)
       case (_, v, _) =>
-        if (v.isQuotient) quotientAcc += 1
+        if (v.isQuotient) quotientAcc add 1
         v
     }
   }
