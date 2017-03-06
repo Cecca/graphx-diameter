@@ -18,9 +18,12 @@
 package it.unipd.dei.graphx.diameter.util
 
 import org.apache.spark.graphx.GraphXUtils
-import org.apache.spark.{Logging, SparkConf, SparkContext}
+import org.apache.spark.{SparkConf, SparkContext}
+import org.slf4j.LoggerFactory
 
-object LocalSparkContext extends Logging {
+object LocalSparkContext {
+
+  private val log = LoggerFactory.getLogger(this.getClass)
 
   def withSpark[T](f: SparkContext => T): T = {
     val cores = Runtime.getRuntime().availableProcessors()
@@ -28,7 +31,7 @@ object LocalSparkContext extends Logging {
     val conf = new SparkConf().set("spark.default.parallelism", par.toString)
     GraphXUtils.registerKryoClasses(conf)
     val sc = new SparkContext("local", "test", conf)
-    logInfo(s"Spark parallelism ${sc.defaultParallelism}")
+    log.info(s"Spark parallelism ${sc.defaultParallelism}")
     try {
       f(sc)
     } finally {

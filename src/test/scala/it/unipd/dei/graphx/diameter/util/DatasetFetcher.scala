@@ -20,19 +20,22 @@ package it.unipd.dei.graphx.diameter.util
 import java.io.File
 import java.net.URL
 
-import it.unipd.dei.graphx.diameter.{Dijkstra, ClusteringInfo, LocalGraph, Distance, Infinity}
-import org.apache.spark.graphx.{Edge, Graph, GraphLoader}
-import org.apache.spark.{Logging, SparkContext}
+import it.unipd.dei.graphx.diameter._
+import org.apache.spark.SparkContext
+import org.apache.spark.graphx.{Graph, GraphLoader}
+import org.slf4j.LoggerFactory
 
+import scala.collection.mutable
 import scala.language.postfixOps
 import scala.sys.process._
-import scala.collection.mutable
 import scala.util.Random
 
 /**
  * Downloads datasets from a remote location.
  */
-object DatasetFetcher extends Logging {
+object DatasetFetcher {
+
+  private val log = LoggerFactory.getLogger(this.getClass)
 
   val cacheDir = new File(System.getProperty("user.home"), ".graphx-diameter-datasets")
 
@@ -45,7 +48,7 @@ object DatasetFetcher extends Logging {
     val output: File = new File(cacheDir, input.split("/").last)
 
     if (!output.isFile) {
-      logInfo(s"Download $input into $output")
+      log.info(s"Download $input into $output")
       new URL(input) #> output !!
     }
     output
@@ -64,7 +67,9 @@ object DatasetFetcher extends Logging {
 
 }
 
-abstract class Dataset(val source: String) extends Logging {
+abstract class Dataset(val source: String) {
+
+  private val log = LoggerFactory.getLogger(this.getClass)
 
   def get(sc: SparkContext): Graph[Int, Distance] = DatasetFetcher.get(sc, source)
 
@@ -79,7 +84,7 @@ abstract class Dataset(val source: String) extends Logging {
    * are actually lower than the ones we can find empirically in this way.
    */
   def diameter(sc: SparkContext): Double = {
-    logInfo("Computing a lower bound to the original diameter")
+    log.info("Computing a lower bound to the original diameter")
     val graph = localCopy(sc)
 
     var bestDist: Distance = 0
@@ -104,7 +109,7 @@ abstract class Dataset(val source: String) extends Logging {
       }
     }
 
-    logInfo(s"Found a lower bound on the original diameter: $bestDist")
+    log.info(s"Found a lower bound on the original diameter: $bestDist")
     bestDist
   }
 

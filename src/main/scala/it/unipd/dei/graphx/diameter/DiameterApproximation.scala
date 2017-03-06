@@ -17,8 +17,8 @@
 
 package it.unipd.dei.graphx.diameter
 
-import org.apache.spark.Logging
 import org.apache.spark.graphx.Graph
+import org.slf4j.LoggerFactory
 
 import scala.language.implicitConversions
 import scala.reflect.ClassTag
@@ -38,7 +38,9 @@ import scala.reflect.ClassTag
  *
  * @author Matteo Ceccarello
  */
-object DiameterApproximation extends Logging {
+object DiameterApproximation {
+
+  private val log = LoggerFactory.getLogger(this.getClass)
 
   /**
    * Computes the average edge weight in a given graph, to be used as a default value for the
@@ -48,7 +50,7 @@ object DiameterApproximation extends Logging {
    * @return the average edge weight
    */
   private def averageWeight[VD:ClassTag](graph: Graph[VD, Distance]): Distance = {
-    logInfo("Computing average edge weight")
+    log.info("Computing average edge weight")
     val start = System.currentTimeMillis()
     val weightSum: Distance = graph.edges.map { edge =>
       edge.attr
@@ -56,7 +58,7 @@ object DiameterApproximation extends Logging {
     val avgWeight = weightSum / graph.numEdges
     val end = System.currentTimeMillis()
     val elapsed = end - start
-    logInfo(s"Average edge weight is $avgWeight (computed in $elapsed ms)")
+    log.info(s"Average edge weight is $avgWeight (computed in $elapsed ms)")
     avgWeight
   }
 
@@ -128,7 +130,7 @@ object DiameterApproximation extends Logging {
   def run[VD:ClassTag](graph: Graph[VD, Distance], target: Long, delta: Distance): Distance = {
     val clustered = Clustering.run(graph, target, delta)
 
-    logInfo("Start compute diameter")
+    log.info("Start compute diameter")
     val localGraph = LocalGraph.fromGraph(clustered)
     val n = localGraph.size
 

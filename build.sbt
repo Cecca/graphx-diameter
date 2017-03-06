@@ -4,13 +4,13 @@ organization := "it.unipd.dei"
 
 version := "0.2.0-SNAPSHOT"
 
-scalaVersion := "2.10.5"
+scalaVersion := "2.11.8"
 
-crossScalaVersions := Seq("2.10.5", "2.11.7")
+crossScalaVersions := Seq("2.10.6", "2.11.8")
 
 spName := "Cecca/graphx-diameter"
 
-sparkVersion := "1.4.1"
+sparkVersion := "2.0.0"
 
 val testSparkVersion = settingKey[String]("The version of Spark to test against.")
 

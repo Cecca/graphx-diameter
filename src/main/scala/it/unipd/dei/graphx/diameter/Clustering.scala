@@ -18,7 +18,8 @@
 package it.unipd.dei.graphx.diameter
 
 import org.apache.spark.graphx.{Graph, TripletFields, VertexId}
-import org.apache.spark.{Accumulator, Logging}
+import org.apache.spark.Accumulator
+import org.slf4j.LoggerFactory
 
 import scala.annotation.tailrec
 import scala.util.Random
@@ -27,7 +28,9 @@ import scala.util.Random
  * The clustering algorithm used to compute the diameter approximation.
  */
 private[diameter]
-object Clustering extends Logging {
+object Clustering {
+
+  private val log = LoggerFactory.getLogger(this.getClass)
 
   def run[VD](graph: Graph[VD, Distance], target: Long, delta: Distance = 1.0)
   : Graph[ClusteringInfo, Distance] = {
@@ -35,7 +38,7 @@ object Clustering extends Logging {
     val maxIterations = math.ceil(math.log(graph.ops.numVertices / target) / math.log(2))
     val batchDim = target / maxIterations
 
-    logInfo(s"Start clustering (iterations=$maxIterations, batch=$batchDim)")
+    log.info(s"Start clustering (iterations=$maxIterations, batch=$batchDim)")
     val clustered = cluster(init(graph), target, delta, batchDim)
 
     clustered
@@ -52,7 +55,7 @@ object Clustering extends Logging {
                        batchDim: Double)
   : Graph[ClusteringInfo, Distance] = {
 
-    logInfo("Start clustering a fraction of the graph")
+    log.info("Start clustering a fraction of the graph")
 
     val quotientSize = graph.vertices.filter({ case (_, v) => v.isQuotient }).count()
     val numUncovered = graph.vertices.filter({ case (_, v) => !v.covered }).count()
@@ -121,7 +124,7 @@ object Clustering extends Logging {
                          delta: Distance)
   : Either[Graph[ClusteringInfo, Distance], Graph[ClusteringInfo, Distance]] = {
 
-    logInfo(s"Doing a tentative with delta=$delta and target $phaseTarget")
+    log.info(s"Doing a tentative with delta=$delta and target $phaseTarget")
 
     val updatedGraph = deltaStep(graph, delta, phaseTarget)
 
@@ -171,7 +174,7 @@ object Clustering extends Logging {
 
     val end = System.currentTimeMillis()
 
-    logInfo(s"Delta step: ${end - start}ms elapsed ")
+    log.info(s"Delta step: ${end - start}ms elapsed ")
 
     if (updatedCnt == 0 || quotientSize <= phaseTarget) {
       updated
